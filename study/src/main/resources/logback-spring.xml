@@ -1,0 +1,21 @@
+<configuration>
+    <springProperty scope="context" name="logging.console.level" source="logging.console.level" />
+
+<!--    控制台配置器 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+<!--  异常控制台打印器 -->
+    <root level="${logging.console.level}">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+<!--  只输出Slf4j注解中，topic=test  -->
+    <logger name="test" level="debug" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+</configuration>
