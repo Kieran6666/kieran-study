@@ -14,21 +14,32 @@ configurations {
     }
 }
 
-allprojects {
-    repositories {
-        // 阿里云仓库
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-    }
+repositories {
+    // 阿里云仓库
+    maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
 }
 
+// compile: 为自己的项目模块添加依赖，该依赖会参与到编译构建过程，并且会打包到APK文件中，如果其它工程依赖本模块， 则会将依赖传递到其它工程中
+// compileOnly: 依赖只会添加到编译路径中，不会打包到apk中，因此只能在编译时访问，且compileOnly修饰的依赖不会传递；只在编译过程中做一些辅助类的工作，在工程中没有使用该依赖库
+// implementation: 为自己的项目模块添加依赖，该依赖会参与到编译构建过程，并且会打包到APK文件中，但该依赖不会传递给其他工程中
+// api: 为自己的项目模块添加依赖，该依赖会参与到编译构建过程，并且会打包到APK文件中，但是这个依赖是可以传递的，比如模块A依赖模块B，B依赖库C，模块B在编译时能够访问到库C，但与implementation不同的是，在模块A中库C也是可以访问的
+// runtimeOnly: 这个与compileOnly相反，它修饰的依赖不会添加到编译路径中，但是被打包到apk中，运行时使用。几乎不使用
+// annotationProcessor: 该依赖用于设置注解处理器依赖, 在APT(Annotation Processing Tool)注解处理工具中使用该依赖
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-parent:2.7.6'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
+
+    // 热部署
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // 自定义元数据，在.properties/.yml文件中使用
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // cglib动态代理
+    implementation 'cglib:cglib:3.3.0'
 }
 
 tasks.named('test') {
