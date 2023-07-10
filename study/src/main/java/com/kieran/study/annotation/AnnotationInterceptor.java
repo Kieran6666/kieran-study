@@ -26,12 +26,9 @@ public class AnnotationInterceptor implements HandlerInterceptor {
                     // 做相应的业务
                     System.err.println("执行业务");
                     return true;
-                } else {
-                    return false;
                 }
-            } else {
-                return false;
             }
+            return true;
         } catch (Exception e) {
             // 自定义response
             PrintWriter writer = response.getWriter();

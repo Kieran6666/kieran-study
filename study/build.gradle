@@ -28,21 +28,29 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-parent:2.7.6'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // lombok
     compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
     // 热部署
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     // 自定义元数据，在.properties/.yml文件中使用
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // cglib动态代理
     implementation 'cglib:cglib:3.3.0'
 
     // Alibaba FastJson
     implementation 'com.alibaba:fastjson:1.2.58'
+
+    // Aliyun SDK
+    implementation 'com.aliyun:ecs20140526:3.1.12'
+
+    // Aliyun 短信SDK
+    implementation 'com.aliyun:alibabacloud-dysmsapi20170525:2.0.23'
 }
 
 tasks.named('test') {
