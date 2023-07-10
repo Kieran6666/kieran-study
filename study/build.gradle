@@ -40,6 +40,9 @@ dependencies {
 
     // cglib动态代理
     implementation 'cglib:cglib:3.3.0'
+
+    // Alibaba FastJson
+    implementation 'com.alibaba:fastjson:1.2.58'
 }
 
 tasks.named('test') {
