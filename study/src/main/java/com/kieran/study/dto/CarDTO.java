@@ -1,6 +1,6 @@
 package com.kieran.study.dto;
 
-public class CarDTO {
+public class CarDTO extends CarFactoryDTO {
     private String brand;
     private String color;
     private boolean ifNow;
@@ -35,6 +35,16 @@ public class CarDTO {
     }
 
     public void setPrice(long price) {
+        this.price = price;
+    }
+
+    public CarDTO() {
+    }
+
+    public CarDTO(String brand, String color, boolean ifNow, long price) {
+        this.brand = brand;
+        this.color = color;
+        this.ifNow = ifNow;
         this.price = price;
     }
 

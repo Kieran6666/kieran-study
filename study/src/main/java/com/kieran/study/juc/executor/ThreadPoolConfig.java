@@ -97,6 +97,8 @@ public class ThreadPoolConfig {
             throw new Exception(error.toString());
         }
 
+
+        // 必须shutdown
         threadPoolExecutor.shutdown();
 
 
