@@ -17,7 +17,7 @@ public class Demo3 {
     void test2() {}
 
     public static void main(String[] args) throws NoSuchMethodException {
-        Method method = Demo3.class.getDeclaredMethod("test2", null);
+        Method method = Demo3.class.getDeclaredMethod("test2", (Class<?>) null);
         method.setAccessible(true);
 
         Anno3 annotation = method.getAnnotation(Anno3.class);

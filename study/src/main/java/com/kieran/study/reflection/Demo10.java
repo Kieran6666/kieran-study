@@ -40,7 +40,7 @@ public class Demo10 {
         TestUtils.println();
 
         // 获取返回值
-        Method test2 = Demo10.class.getDeclaredMethod("test2", null);
+        Method test2 = Demo10.class.getDeclaredMethod("test2", (Class<?>) null);
         test2.setAccessible(true);
 
         Class<?> returnType = test2.getReturnType();
