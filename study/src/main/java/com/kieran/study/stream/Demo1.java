@@ -4,6 +4,7 @@ import com.kieran.study.utils.TestUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,5 +63,31 @@ public class Demo1 {
         System.err.println(list4);
 
         // TIPS: 该方法可以实现分批查询，与CompletableFutureStream可以实现多线程分批查询
+
+        String s = "123456789";
+        byte[] b1 = s.getBytes(StandardCharsets.UTF_8);
+        System.err.println(new String(b1, StandardCharsets.UTF_8));
+
+        byte[] b2 = new byte[s.length() - 4];
+        System.arraycopy(b1, 2, b2, 0, s.length() - 4);
+
+        System.err.println(new String(b2, StandardCharsets.UTF_8));
+
+
+        try {
+            try {
+                throw new Exception("fjafas");
+            }
+              finally {
+                System.err.println("触发");
+                System.err.println("fff");
+            }
+
+        } catch (Exception e) {
+            System.err.println(e);
+            System.err.println("e2 被触发");
+        } finally {
+            System.err.println("f2 被触发");
+        }
     }
 }

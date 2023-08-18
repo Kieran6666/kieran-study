@@ -1,0 +1,18 @@
+# 注意是profiles，不是profile
+spring:
+  profiles:
+    active:
+      dev
+knife4j:
+  enable: true
+  openapi:
+    license: Apache 2.0
+    license-url: https://stackoverflow.com/
+    terms-of-service-url: https://stackoverflow.com/
+    group:
+      test1:
+        group-name: 分组名称
+        api-rule: package
+        api-rule-resources:
+          - com.knife4j.demo.new3
+

@@ -12,13 +12,23 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+
+    mybatisGenerator
 }
+
 
 repositories {
     // 阿里云仓库
     maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+    mavenCentral()
 }
 
+// compile: 为自己的项目模块添加依赖，该依赖会参与到编译构建过程，并且会打包到APK文件中，如果其它工程依赖本模块， 则会将依赖传递到其它工程中
+// compileOnly: 依赖只会添加到编译路径中，不会打包到apk中，因此只能在编译时访问，且compileOnly修饰的依赖不会传递；只在编译过程中做一些辅助类的工作，在工程中没有使用该依赖库
+// implementation: 为自己的项目模块添加依赖，该依赖会参与到编译构建过程，并且会打包到APK文件中，但该依赖不会传递给其他工程中
+// api: 为自己的项目模块添加依赖，该依赖会参与到编译构建过程，并且会打包到APK文件中，但是这个依赖是可以传递的，比如模块A依赖模块B，B依赖库C，模块B在编译时能够访问到库C，但与implementation不同的是，在模块A中库C也是可以访问的
+// runtimeOnly: 这个与compileOnly相反，它修饰的依赖不会添加到编译路径中，但是被打包到apk中，运行时使用。几乎不使用
+// annotationProcessor: 该依赖用于设置注解处理器依赖, 在APT(Annotation Processing Tool)注解处理工具中使用该依赖
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -28,8 +38,90 @@ dependencies {
     // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // 数据校验框架，实际上是依赖Hibernate-Validator
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // swagger2增强版
+    implementation 'com.github.xiaoymin:knife4j-openapi2-spring-boot-starter:4.1.0'
+
+    // springboot集成redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.7.6'
+    implementation 'org.springframework.data:spring-data-redis:2.7.6'
+
+    // Alibaba FastJson
+    implementation 'com.alibaba:fastjson:1.2.58'
+
+    // MySQL支持
+    implementation 'mysql:mysql-connector-java'
+
+    // Mybatis支持
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.2"
+
+    // MyBatis Generator支持
+    mybatisGenerator 'org.mybatis.generator:mybatis-generator-core:1.3.5'
+    mybatisGenerator 'mysql:mysql-connector-java'
+    mybatisGenerator 'tk.mybatis:mapper:3.4.0'
+
+    // Mybatis TK支持
+    implementation 'tk.mybatis:mapper-spring-boot-starter:2.1.2'
+
+    // Canal支持
+    implementation 'com.alibaba.otter:canal.client:1.1.0'
+
+    // TODO:: 这是干嘛的
+//    implementation 'com.google.protobuf:protobuf-java:3.24.0'
+
+    // 第三方封装好的canal
+    implementation 'top.javatool:canal-spring-boot-starter:1.2.1-RELEASE'
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+
+// Mybatis Generator配置，注意配置文件固定为 application-dev.properties
+task mybatisGenerate  {
+    doLast {
+        def prop = new Properties()
+
+        file("src/main/resources/application-dev.properties").withInputStream { prop.load(it) }
+        println prop.getProperty("spring.application.name")
+
+        ant.properties['targetProject'] = projectDir.path
+        ant.properties['driverClass'] = prop.getProperty('spring.datasource.driver-class-name')
+        ant.properties['connectionURL'] = prop.getProperty('spring.datasource.url')
+        ant.properties['userId'] = prop.getProperty('spring.datasource.username')
+        ant.properties['password'] = prop.getProperty('spring.datasource.password')
+        ant.properties['catalogName'] = prop.getProperty('spring.datasource.catalog')
+        ant.properties['src_main_java'] = sourceSets.main.java.srcDirs[0].path
+        ant.properties['src_main_resources'] = sourceSets.main.resources.srcDirs[0].path
+        ant.properties['modelPackage'] = prop.getProperty('modelPackage')
+        ant.properties['mapperPackage'] = prop.getProperty('mapperPackage')
+        ant.properties['sqlMapperPackage'] = prop.getProperty('sqlMapperPackage')
+        ant.taskdef(
+                name: 'mbgenerator',
+                classname: 'org.mybatis.generator.ant.GeneratorAntTask',
+                classpath: configurations.mybatisGenerator.asPath
+        )
+        ant.mbgenerator(overwrite: true,
+                configfile: 'db/generatorConfig.xml', verbose: true) {
+            propertyset {
+                propertyref(name: 'targetProject')
+                propertyref(name: 'userId')
+                propertyref(name: 'driverClass')
+                propertyref(name: 'connectionURL')
+                propertyref(name: 'password')
+                propertyref(name: 'catalogName')
+                propertyref(name: 'src_main_java')
+                propertyref(name: 'src_main_resources')
+                propertyref(name: 'modelPackage')
+                propertyref(name: 'mapperPackage')
+                propertyref(name: 'sqlMapperPackage')
+
+            }
+        }
+    }
 }

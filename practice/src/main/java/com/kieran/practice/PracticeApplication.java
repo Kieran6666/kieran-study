@@ -2,10 +2,12 @@ package com.kieran.practice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import tk.mybatis.spring.annotation.MapperScan;
 
 /**
  * Practice Module
  */
+@MapperScan(basePackages = "com.kieran.practice.mapper")
 @SpringBootApplication
 public class PracticeApplication {
 

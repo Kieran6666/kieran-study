@@ -12,6 +12,8 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+
+    mybatisGenerator
 }
 
 repositories {
@@ -35,6 +37,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     // 热部署
+    // 只引入此依赖无法生效，需要勾选preferences->Build, Execution, Deployment->compiler->build project automatically
+    // 在springboot启动器中add run options，选择On Update action(代码变动时)/On frame deactivation(失去焦点时)，选择更新classes and resources
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     // 自定义元数据，在.properties/.yml文件中使用
@@ -51,8 +55,77 @@ dependencies {
 
     // Aliyun 短信SDK
     implementation 'com.aliyun:alibabacloud-dysmsapi20170525:2.0.23'
+
+    // Jedis
+    implementation 'redis.clients:jedis:4.4.3'
+
+    // springboot集成redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.7.6'
+    implementation 'org.springframework.data:spring-data-redis:2.7.6'
+
+    // 本地缓存支持，For Java 11 or above, use 3.x otherwise use 2.x.
+    implementation 'com.github.ben-manes.caffeine:caffeine:2.9.3'
+
+    // MySQL支持
+    implementation 'mysql:mysql-connector-java'
+
+    // Mybatis支持
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.2"
+
+    // MyBatis Generator支持
+    mybatisGenerator 'org.mybatis.generator:mybatis-generator-core:1.3.5'
+    mybatisGenerator 'mysql:mysql-connector-java'
+    mybatisGenerator 'tk.mybatis:mapper:3.4.0'
+
+    // Mybatis TK支持
+    implementation 'tk.mybatis:mapper-spring-boot-starter:2.1.2'
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// Mybatis Generator配置，注意配置文件固定为 application-dev.properties
+task mybatisGenerate  {
+    doLast {
+        def prop = new Properties()
+
+        file("src/main/resources/application-dev.properties").withInputStream { prop.load(it) }
+        println prop.getProperty("spring.application.name")
+
+        ant.properties['targetProject'] = projectDir.path
+        ant.properties['driverClass'] = prop.getProperty('spring.datasource.driver-class-name')
+        ant.properties['connectionURL'] = prop.getProperty('spring.datasource.url')
+        ant.properties['userId'] = prop.getProperty('spring.datasource.username')
+        ant.properties['password'] = prop.getProperty('spring.datasource.password')
+        ant.properties['catalogName'] = prop.getProperty('spring.datasource.catalog')
+        ant.properties['src_main_java'] = sourceSets.main.java.srcDirs[0].path
+        ant.properties['src_main_resources'] = sourceSets.main.resources.srcDirs[0].path
+        ant.properties['modelPackage'] = prop.getProperty('modelPackage')
+        ant.properties['mapperPackage'] = prop.getProperty('mapperPackage')
+        ant.properties['sqlMapperPackage'] = prop.getProperty('sqlMapperPackage')
+        ant.taskdef(
+                name: 'mbgenerator',
+                classname: 'org.mybatis.generator.ant.GeneratorAntTask',
+                classpath: configurations.mybatisGenerator.asPath
+        )
+        ant.mbgenerator(overwrite: true,
+                configfile: 'db/generatorConfig.xml', verbose: true) {
+            propertyset {
+                propertyref(name: 'targetProject')
+                propertyref(name: 'userId')
+                propertyref(name: 'driverClass')
+                propertyref(name: 'connectionURL')
+                propertyref(name: 'password')
+                propertyref(name: 'catalogName')
+                propertyref(name: 'src_main_java')
+                propertyref(name: 'src_main_resources')
+                propertyref(name: 'modelPackage')
+                propertyref(name: 'mapperPackage')
+                propertyref(name: 'sqlMapperPackage')
+
+            }
+        }
+    }
 }
