@@ -1,5 +1,8 @@
 package com.kieran.study.dto;
 
+import lombok.Data;
+
+@Data
 public class CarDTO extends CarFactoryDTO {
     private String brand;
     private String color;

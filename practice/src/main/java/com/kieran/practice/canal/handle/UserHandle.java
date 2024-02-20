@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import top.javatool.canal.client.annotation.CanalTable;
 import top.javatool.canal.client.handler.EntryHandler;
 
-@Component
+//@Component
 @CanalTable("m_user")
 public class UserHandle implements EntryHandler<User> {
 

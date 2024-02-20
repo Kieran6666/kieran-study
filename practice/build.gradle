@@ -75,6 +75,9 @@ dependencies {
     // 第三方封装好的canal
     implementation 'top.javatool:canal-spring-boot-starter:1.2.1-RELEASE'
 
+    // rocketmq， 原生API
+    implementation 'org.apache.rocketmq:rocketmq-client:4.9.7'
+
 }
 
 tasks.named('test') {

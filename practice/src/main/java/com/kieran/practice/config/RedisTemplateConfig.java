@@ -32,34 +32,19 @@ public class RedisTemplateConfig {
     @ConditionalOnMissingBean
 //    @ConditionalOnSingleCandidate 判断指定类在 BeanFactory 中是否只有一个实例
 //    由于Spring提供的RedisTemplate已经拥有BeanFactory的实例，因此开启此注解会导致本方法不生效
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        // 为了自己开发方便，直接使用<String, Object>
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<Object, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
 
-        // Json序列化
-        Jackson2JsonRedisSerializer<Object> objectJackson2JsonRedisSerializer
-                = new Jackson2JsonRedisSerializer<>(Object.class);
-        ObjectMapper om = new ObjectMapper();
-        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-        objectJackson2JsonRedisSerializer.setObjectMapper(om);
+        // 设置redis的String/Value的默认序列化方式
+        DefaultStrSerializer stringRedisSerializer = new DefaultStrSerializer();
+        template.setKeySerializer(stringRedisSerializer);
+        template.setValueSerializer(stringRedisSerializer);
+        template.setHashKeySerializer(stringRedisSerializer);
+        template.setHashValueSerializer(stringRedisSerializer);
 
-        // String序列化
-        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer(StandardCharsets.UTF_8);
+        template.afterPropertiesSet();
 
-        // key采用String序列化
-        redisTemplate.setKeySerializer(stringRedisSerializer);
-        // value采用Json序列化
-        redisTemplate.setValueSerializer(objectJackson2JsonRedisSerializer);
-
-        // hash的Key采用String序列化
-        redisTemplate.setHashKeySerializer(stringRedisSerializer);
-        // hash的value采用Json序列化
-        redisTemplate.setHashValueSerializer(objectJackson2JsonRedisSerializer);
-
-        redisTemplate.afterPropertiesSet();
-
-        return redisTemplate;
+        return template;
     }
 }
