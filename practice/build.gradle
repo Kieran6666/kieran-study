@@ -16,9 +16,11 @@ configurations {
     mybatisGenerator
 }
 
+
 repositories {
     // 阿里云仓库
     maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+    mavenCentral()
 }
 
 // compile: 为自己的项目模块添加依赖，该依赖会参与到编译构建过程，并且会打包到APK文件中，如果其它工程依赖本模块， 则会将依赖传递到其它工程中
@@ -28,43 +30,27 @@ repositories {
 // runtimeOnly: 这个与compileOnly相反，它修饰的依赖不会添加到编译路径中，但是被打包到apk中，运行时使用。几乎不使用
 // annotationProcessor: 该依赖用于设置注解处理器依赖, 在APT(Annotation Processing Tool)注解处理工具中使用该依赖
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-parent:2.7.6'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // 热部署
-    // 只引入此依赖无法生效，需要勾选preferences->Build, Execution, Deployment->compiler->build project automatically
-    // 在springboot启动器中add run options，选择On Update action(代码变动时)/On frame deactivation(失去焦点时)，选择更新classes and resources
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // 数据校验框架，实际上是依赖Hibernate-Validator
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // 自定义元数据，在.properties/.yml文件中使用
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-
-    // cglib动态代理
-    implementation 'cglib:cglib:3.3.0'
-
-    // Alibaba FastJson
-    implementation 'com.alibaba:fastjson:1.2.58'
-
-    // Aliyun SDK
-    implementation 'com.aliyun:ecs20140526:3.1.12'
-
-    // Aliyun 短信SDK
-    implementation 'com.aliyun:alibabacloud-dysmsapi20170525:2.0.23'
-
-    // Jedis
-    implementation 'redis.clients:jedis:4.4.3'
+    // swagger2增强版
+    implementation 'com.github.xiaoymin:knife4j-openapi2-spring-boot-starter:4.1.0'
 
     // springboot集成redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.7.6'
     implementation 'org.springframework.data:spring-data-redis:2.7.6'
 
-    // 本地缓存支持，For Java 11 or above, use 3.x otherwise use 2.x.
-    implementation 'com.github.ben-manes.caffeine:caffeine:2.9.3'
+    // Alibaba FastJson
+    implementation 'com.alibaba:fastjson:1.2.58'
 
     // MySQL支持
     implementation 'mysql:mysql-connector-java'
@@ -80,11 +66,24 @@ dependencies {
     // Mybatis TK支持
     implementation 'tk.mybatis:mapper-spring-boot-starter:2.1.2'
 
+    // Canal支持
+    implementation 'com.alibaba.otter:canal.client:1.1.0'
+
+    // TODO:: 这是干嘛的
+//    implementation 'com.google.protobuf:protobuf-java:3.24.0'
+
+    // 第三方封装好的canal
+    implementation 'top.javatool:canal-spring-boot-starter:1.2.1-RELEASE'
+
+    // rocketmq， 原生API
+    implementation 'org.apache.rocketmq:rocketmq-client:4.9.7'
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
 
 // Mybatis Generator配置，注意配置文件固定为 application-dev.properties
 task mybatisGenerate  {
